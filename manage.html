@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="asset/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZQ-URL 管理面板</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css">
+  <style>
+    body {
+      background: url('https://i0.wp.com/wangwangit001.cachefly.net/wangwangit/image/master/img/%E6%B5%8B%E8%AF%952.jpg') center/cover fixed;
+      font-family: 'Arial', sans-serif;
+      color: #333;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+
+    .success {
+      background-color: #d1fae5;
+      color: #047857;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .error {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .warning {
+      background-color: #fef3c7;
+      color: #d97706;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-danger {
+      background-color: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+
+    .btn-primary {
+      background-color: #3b82f6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #2563eb;
+    }
+
+    .expired {
+      background-color: #fee2e2;
+    }
+
+    .expiring-soon {
+      background-color: #fef3c7;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-800">ZQ-URL 管理面板</h1>
+      <a href="/" class="btn btn-primary">返回首页</a>
+    </div>
+
+    <div x-data="manageApp" x-cloak>
+      <!-- 统计信息 -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-blue-100 p-4 rounded-lg">
+          <h3 class="font-bold text-blue-800">总链接数</h3>
+          <p class="text-2xl font-bold text-blue-600" x-text="stats.total"></p>
+        </div>
+        <div class="bg-green-100 p-4 rounded-lg">
+          <h3 class="font-bold text-green-800">有效链接</h3>
+          <p class="text-2xl font-bold text-green-600" x-text="stats.active"></p>
+        </div>
+        <div class="bg-yellow-100 p-4 rounded-lg">
+          <h3 class="font-bold text-yellow-800">即将过期</h3>
+          <p class="text-2xl font-bold text-yellow-600" x-text="stats.expiringSoon"></p>
+        </div>
+        <div class="bg-red-100 p-4 rounded-lg">
+          <h3 class="font-bold text-red-800">已过期</h3>
+          <p class="text-2xl font-bold text-red-600" x-text="stats.expired"></p>
+        </div>
+      </div>
+
+      <!-- 消息提示 -->
+      <div x-show="alert" :class="alert?.type" x-text="alert?.message"></div>
+
+      <!-- 搜索和筛选 -->
+      <div class="mb-4 flex flex-wrap gap-4">
+        <input 
+          type="text" 
+          placeholder="搜索短链接或原URL..." 
+          x-model="searchTerm"
+          class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+        <select 
+          x-model="filterStatus"
+          class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">全部状态</option>
+          <option value="active">有效</option>
+          <option value="expiring">即将过期</option>
+          <option value="expired">已过期</option>
+        </select>
+        <button 
+          @click="loadLinks()"
+          class="btn btn-primary"
+        >
+          刷新
+        </button>
+      </div>
+
+      <!-- 链接列表 -->
+      <div class="table-container">
+        <table class="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="border border-gray-300 px-4 py-2 text-left">短链接</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">原URL</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">创建时间</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">过期时间</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">状态</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="link in filteredLinks" :key="link.id">
+              <tr :class="getRowClass(link)">
+                <td class="border border-gray-300 px-4 py-2">
+                  <a :href="`/${link.slug}`" target="_blank" class="text-blue-600 hover:underline" x-text="link.slug"></a>
+                </td>
+                <td class="border border-gray-300 px-4 py-2">
+                  <a :href="link.url" target="_blank" class="text-blue-600 hover:underline truncate block max-w-xs" x-text="link.url"></a>
+                </td>
+                <td class="border border-gray-300 px-4 py-2" x-text="formatDate(link.create_time)"></td>
+                <td class="border border-gray-300 px-4 py-2" x-text="link.expires_at ? formatDate(link.expires_at) : '永不过期'"></td>
+                <td class="border border-gray-300 px-4 py-2">
+                  <span :class="getStatusClass(link)" x-text="getStatusText(link)"></span>
+                </td>
+                <td class="border border-gray-300 px-4 py-2">
+                  <button 
+                    @click="deleteLink(link.id, link.slug)"
+                    class="btn btn-danger"
+                  >
+                    删除
+                  </button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 分页 -->
+      <div class="mt-4 flex justify-between items-center">
+        <div class="text-sm text-gray-600">
+          显示 <span x-text="(currentPage - 1) * pageSize + 1"></span> - 
+          <span x-text="Math.min(currentPage * pageSize, filteredLinks.length)"></span> 
+          共 <span x-text="filteredLinks.length"></span> 条记录
+        </div>
+        <div class="flex gap-2">
+          <button 
+            @click="currentPage--" 
+            :disabled="currentPage <= 1"
+            class="px-3 py-1 border border-gray-300 rounded disabled:opacity-50"
+          >
+            上一页
+          </button>
+          <span class="px-3 py-1" x-text="currentPage"></span>
+          <button 
+            @click="currentPage++" 
+            :disabled="currentPage * pageSize >= filteredLinks.length"
+            class="px-3 py-1 border border-gray-300 rounded disabled:opacity-50"
+          >
+            下一页
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="asset/js/alpine.js"></script>
+  <script>
+    const manageApp = {
+      links: [],
+      searchTerm: '',
+      filterStatus: '',
+      currentPage: 1,
+      pageSize: 20,
+      alert: null,
+      stats: {
+        total: 0,
+        active: 0,
+        expiringSoon: 0,
+        expired: 0
+      },
+
+      init() {
+        this.loadLinks();
+      },
+
+      async loadLinks() {
+        try {
+          const response = await fetch('/manage/api/links');
+          const data = await response.json();
+          
+          if (data.success) {
+            this.links = data.links;
+            this.calculateStats();
+          } else {
+            this.alert = { type: 'error', message: data.message || '加载失败' };
+          }
+        } catch (error) {
+          this.alert = { type: 'error', message: '网络错误：' + error.message };
+        }
+      },
+
+      calculateStats() {
+        const now = new Date();
+        const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+        this.stats.total = this.links.length;
+        this.stats.active = this.links.filter(link => !link.expires_at || new Date(link.expires_at) > now).length;
+        this.stats.expiringSoon = this.links.filter(link => 
+          link.expires_at && 
+          new Date(link.expires_at) > now && 
+          new Date(link.expires_at) <= oneDayFromNow
+        ).length;
+        this.stats.expired = this.links.filter(link => 
+          link.expires_at && new Date(link.expires_at) <= now
+        ).length;
+      },
+
+      get filteredLinks() {
+        let filtered = this.links;
+
+        // 搜索过滤
+        if (this.searchTerm) {
+          const term = this.searchTerm.toLowerCase();
+          filtered = filtered.filter(link => 
+            link.slug.toLowerCase().includes(term) ||
+            link.url.toLowerCase().includes(term)
+          );
+        }
+
+        // 状态过滤
+        if (this.filterStatus) {
+          const now = new Date();
+          const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+          switch (this.filterStatus) {
+            case 'active':
+              filtered = filtered.filter(link => !link.expires_at || new Date(link.expires_at) > now);
+              break;
+            case 'expiring':
+              filtered = filtered.filter(link => 
+                link.expires_at && 
+                new Date(link.expires_at) > now && 
+                new Date(link.expires_at) <= oneDayFromNow
+              );
+              break;
+            case 'expired':
+              filtered = filtered.filter(link => link.expires_at && new Date(link.expires_at) <= now);
+              break;
+          }
+        }
+
+        return filtered;
+      },
+
+      getRowClass(link) {
+        const now = new Date();
+        const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+        if (link.expires_at && new Date(link.expires_at) <= now) {
+          return 'expired';
+        } else if (link.expires_at && new Date(link.expires_at) <= oneDayFromNow) {
+          return 'expiring-soon';
+        }
+        return '';
+      },
+
+      getStatusClass(link) {
+        const now = new Date();
+        const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+        if (link.expires_at && new Date(link.expires_at) <= now) {
+          return 'text-red-600 font-bold';
+        } else if (link.expires_at && new Date(link.expires_at) <= oneDayFromNow) {
+          return 'text-yellow-600 font-bold';
+        }
+        return 'text-green-600 font-bold';
+      },
+
+      getStatusText(link) {
+        const now = new Date();
+        const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+        if (link.expires_at && new Date(link.expires_at) <= now) {
+          return '已过期';
+        } else if (link.expires_at && new Date(link.expires_at) <= oneDayFromNow) {
+          return '即将过期';
+        }
+        return '有效';
+      },
+
+      formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleString('zh-CN');
+      },
+
+      async deleteLink(id, slug) {
+        if (!confirm(`确定要删除短链接 "${slug}" 吗？`)) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`/manage/api/links/${id}`, {
+            method: 'DELETE'
+          });
+          const data = await response.json();
+
+          if (data.success) {
+            this.alert = { type: 'success', message: '删除成功' };
+            this.loadLinks(); // 重新加载数据
+          } else {
+            this.alert = { type: 'error', message: data.message || '删除失败' };
+          }
+        } catch (error) {
+          this.alert = { type: 'error', message: '网络错误：' + error.message };
+        }
+      }
+    };
+  </script>
+</body>
+
+</html> 
