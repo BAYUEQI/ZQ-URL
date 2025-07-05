@@ -160,7 +160,7 @@
             </tr>
           </thead>
           <tbody>
-            <template x-for="link in filteredLinks" :key="link.id">
+            <template x-for="link in pagedLinks" :key="link.id">
               <tr :class="getRowClass(link)">
                 <td class="border border-gray-300 px-4 py-2">
                   <a :href="`/${link.slug}`" target="_blank" class="text-blue-600 hover:underline" x-text="link.slug"></a>
@@ -252,6 +252,10 @@
           if (data.success) {
             this.links = data.links;
             this.calculateStats();
+            // 修正分页：如果当前页超出最大页，自动跳到最后一页
+            if ((this.currentPage - 1) * this.pageSize >= this.filteredLinks.length) {
+              this.currentPage = Math.max(1, Math.ceil(this.filteredLinks.length / this.pageSize));
+            }
           } else {
             this.alert = { type: 'error', message: data.message || '加载失败' };
           }
@@ -311,6 +315,13 @@
         }
 
         return filtered;
+      },
+
+      get pagedLinks() {
+        // 新增：只显示当前页的数据
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = this.currentPage * this.pageSize;
+        return this.filteredLinks.slice(start, end);
       },
 
       getRowClass(link) {
