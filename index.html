@@ -9,11 +9,14 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css">
   <style>
     body {
-      background: linear-gradient(135deg, #e0e7ff 0%, #f0fdf4 100%);
+      background: url('https://i0.wp.com/wangwangit001.cachefly.net/wangwangit/image/master/img/%E6%B5%8B%E8%AF%952.jpg') center/cover fixed;
+      /* 设置背景图片 */
       font-family: 'Arial', sans-serif;
+      /* 设置默认字体 */
       color: #333;
-      min-height: 100vh;
+      /* 设置默认文本颜色 */
     }
+
     main {
       display: flex;
       align-items: center;
@@ -21,108 +24,77 @@
       min-height: calc(100vh - 8rem);
       text-align: center;
     }
+
     .container {
-      background: rgba(255,255,255,0.98);
-      border-radius: 18px;
-      padding: 48px 32px 32px 32px;
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-      max-width: 420px;
-      width: 100%;
-      margin: 32px auto;
-      transition: box-shadow 0.3s;
-    }
-    .container:hover {
-      box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.22);
-    }
-    input, select {
-      width: 100%;
-      padding: 14px 16px;
+      background-color: rgba(255, 255, 255, 0.8);
+      /* 设置容器背景颜色及透明度 */
       border-radius: 10px;
-      border: 1px solid #d1d5db;
-      margin-bottom: 12px;
-      font-size: 1.1em;
-      background: #f9fafb;
-      transition: border 0.2s, box-shadow 0.2s;
+      padding: 40px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+      /* 添加阴影 */
+      max-width: 600px;
     }
-    input:focus, select:focus {
-      border: 1.5px solid #6366f1;
-      box-shadow: 0 0 0 2px #a5b4fc;
+
+    input:focus {
       outline: none;
-      background: #fff;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.5);
+      /* 绿色聚焦效果 */
     }
+
     button {
-      background: linear-gradient(90deg, #22c55e 0%, #3b82f6 100%);
+      background-color: #22c55e;
+      /* 绿色按钮 */
       color: white;
-      font-size: 1.15em;
-      border: none;
-      border-radius: 10px;
-      padding: 14px 0;
-      width: 100%;
-      margin-top: 10px;
-      font-weight: 700;
-      box-shadow: 0 2px 8px rgba(34,197,94,0.08);
-      transition: background 0.2s, box-shadow 0.2s;
+      transition: background-color 0.3s ease;
     }
+
     button:hover {
-      background: linear-gradient(90deg, #16a34a 0%, #2563eb 100%);
-      box-shadow: 0 4px 16px rgba(59,130,246,0.12);
+      background-color: #16a34a;
+      /* 深绿色悬停效果 */
     }
-    .success, .error {
-      padding: 12px 20px;
-      border-radius: 8px;
-      margin-bottom: 18px;
-      font-weight: 600;
-      font-size: 1.05em;
-    }
-    .success {
-      background-color: #d1fae5;
-      color: #047857;
-    }
-    .error {
-      background-color: #fee2e2;
-      color: #b91c1c;
-    }
-    h1 {
-      font-size: 2.3em;
-      font-weight: 800;
-      margin-bottom: 18px;
-      color: #2563eb;
-      letter-spacing: 1px;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 1em;
-      color: #374151;
-      text-align: left;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 24px 8px 18px 8px;
-        max-width: 98vw;
-      }
-      h1 {
-        font-size: 1.5em;
-      }
-      button {
-        font-size: 1em;
-        padding: 12px 0;
-      }
-      input, select {
-        font-size: 1em;
-        padding: 10px 12px;
-      }
-    }
+
     footer {
-      background: rgba(255,255,255,0.95);
-      padding: 16px 0 8px 0;
+      background-color: rgba(255, 255, 255, 0.9);
+      /* 设置页脚背景颜色及透明度 */
+      padding: 20px;
       text-align: center;
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.07);
-      font-size: 0.98em;
+      box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+      /* 添加顶部阴影 */
+    }
+
+    h1 {
+      font-size: 3em;
+      /* 加大标题字体 */
+      font-weight: 700;
+      /* 设置标题字体粗细 */
+      margin-bottom: 20px;
+      color: #22c55e;
+      /* 设置标题颜色 */
+    }
+
+    .success,
+    .error {
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      /* 设置消息字体粗细 */
+    }
+
+    .success {
+      background-color: #d1fae5;
+      /* 浅绿色成功消息 */
+      color: #047857;
+    }
+
+    .error {
+      background-color: #fee2e2;
+      /* 浅红色错误消息 */
+      color: #b91c1c;
     }
   </style>
 </head>
