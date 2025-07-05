@@ -160,7 +160,7 @@
             </tr>
           </thead>
           <tbody>
-            <template x-for="link in pagedLinks" :key="link.id">
+            <template x-for="link in filteredLinks" :key="link.id">
               <tr :class="getRowClass(link)">
                 <td class="border border-gray-300 px-4 py-2">
                   <a :href="`/${link.slug}`" target="_blank" class="text-blue-600 hover:underline" x-text="link.slug"></a>
@@ -250,12 +250,23 @@
           const data = await response.json();
           
           if (data.success) {
+            // 修正 expires_at 字段
+            data.links.forEach(link => {
+              if (link.expires_at === "null" || link.expires_at === null) {
+                link.expires_at = null;
+              }
+              // 修正 create_time 字段为标准格式
+              if (link.create_time && link.create_time.includes('年')) {
+                // 尝试把中文时间转成标准格式
+                const match = link.create_time.match(/(\\d+)年(\\d+)月(\\d+)日 (\\d+):(\\d+):(\\d+)/);
+                if (match) {
+                  const [_, y, m, d, h, min, s] = match;
+                  link.create_time = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${h.padStart(2,'0')}:${min.padStart(2,'0')}:${s.padStart(2,'0')}`;
+                }
+              }
+            });
             this.links = data.links;
             this.calculateStats();
-            // 修正分页：如果当前页超出最大页，自动跳到最后一页
-            if ((this.currentPage - 1) * this.pageSize >= this.filteredLinks.length) {
-              this.currentPage = Math.max(1, Math.ceil(this.filteredLinks.length / this.pageSize));
-            }
           } else {
             this.alert = { type: 'error', message: data.message || '加载失败' };
           }
@@ -317,13 +328,6 @@
         return filtered;
       },
 
-      get pagedLinks() {
-        // 新增：只显示当前页的数据
-        const start = (this.currentPage - 1) * this.pageSize;
-        const end = this.currentPage * this.pageSize;
-        return this.filteredLinks.slice(start, end);
-      },
-
       getRowClass(link) {
         const now = new Date();
         const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -362,15 +366,16 @@
 
       formatDate(dateString) {
         if (!dateString) return '';
-        // 尝试直接用Date解析
-        let date = new Date(dateString);
-        if (isNaN(date.getTime())) {
-          // 兼容"2025年7月5日 18:24:28"这种格式
-          // 替换为 2025/07/05 18:24:28
-          const fixed = dateString.replace(/年|月/g, '/').replace('日', '').replace(/-/g, '/');
-          date = new Date(fixed);
+        // 兼容中文时间
+        if (dateString.includes('年')) {
+          const match = dateString.match(/(\\d+)年(\\d+)月(\\d+)日 (\\d+):(\\d+):(\\d+)/);
+          if (match) {
+            const [_, y, m, d, h, min, s] = match;
+            return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')} ${h.padStart(2,'0')}:${min.padStart(2,'0')}:${s.padStart(2,'0')}`;
+          }
         }
-        if (isNaN(date.getTime())) return dateString; // 还是不行就原样返回
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
         return date.toLocaleString('zh-CN');
       },
 
