@@ -362,7 +362,15 @@
 
       formatDate(dateString) {
         if (!dateString) return '';
-        const date = new Date(dateString);
+        // 尝试直接用Date解析
+        let date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+          // 兼容"2025年7月5日 18:24:28"这种格式
+          // 替换为 2025/07/05 18:24:28
+          const fixed = dateString.replace(/年|月/g, '/').replace('日', '').replace(/-/g, '/');
+          date = new Date(fixed);
+        }
+        if (isNaN(date.getTime())) return dateString; // 还是不行就原样返回
         return date.toLocaleString('zh-CN');
       },
 
