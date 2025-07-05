@@ -41,9 +41,9 @@ export async function onRequestDelete(context) {
 
     try {
         // 先检查链接是否存在
-        const existingLink = await env.DB.prepare(`
-            SELECT id, slug FROM links WHERE id = ?
-        `).first(linkId);
+        const existingLink = await env.DB.prepare(
+            `SELECT id, slug FROM links WHERE id = ?`
+        ).bind(Number(linkId)).first();
 
         if (!existingLink) {
             return Response.json({ 
@@ -60,18 +60,14 @@ export async function onRequestDelete(context) {
         }
 
         // 删除链接
-        const delLinks = await env.DB.prepare(
+        await env.DB.prepare(
             `DELETE FROM links WHERE id = ?`
         ).bind(Number(linkId)).run();
 
-        console.log('删除links参数:', linkId, delLinks);
-
         // 同时删除相关的访问日志
-        const delLogs = await env.DB.prepare(
+        await env.DB.prepare(
             `DELETE FROM logs WHERE slug = ?`
         ).bind(existingLink.slug).run();
-
-        console.log('删除logs参数:', existingLink.slug, delLogs);
 
         return Response.json({ 
             success: true, 
