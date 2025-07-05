@@ -1,14 +1,5 @@
-## 介绍
-
-首先感谢原项目 [https://github.com/x-dr/short](https://github.com/x-dr/short) 的开源，本项目是在其基础上进行优化和功能增强的版本。
-
-**相比原项目，本项目的改进如下：**
-
-*   **UI 大改造：** 重新设计了用户界面，使其更加美观、现代化，并增强了用户体验。
-*   **过期时间选项：** 增加了短链接过期时间选项，更加灵活。
-
 ## 演示
-[https://url.wangwangit.com/](https://url.wangwangit.com/)
+[https://url.520jacky.dpdns.org/](https://url.520jacky.dpdns.org/)
 
 ## 使用 Cloudflare Pages 部署
 
