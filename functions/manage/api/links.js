@@ -25,7 +25,7 @@ export async function onRequestGet(context) {
 
     try {
         // 获取所有链接，按创建时间倒序排列
-        const links = await env.DATABASE.prepare(`
+        const links = await env.DB.prepare(`
             SELECT id, url, slug, create_time, expires_at, status 
             FROM links 
             ORDER BY create_time DESC
