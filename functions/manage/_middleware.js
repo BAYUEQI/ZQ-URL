@@ -70,11 +70,13 @@ async function errorHandling(context) {
   function authentication(context) {
     // context.env.BASIC_USER="admin"
     // context.env.BASIC_PASS="admin"
-    //check if the env variables Disable_Dashboard are set
-    if (typeof context.env.IMG == "undefined" || context.env.IMG == null || context.env.IMG == "") {
+    //check if the database is bound
+    console.log('DB binding check:', typeof context.env.DB, context.env.DB);
+    
+    if (typeof context.env.DB == "undefined" || context.env.DB == null) {
       return Response.json({
         status: 200,
-        msg: '仪表板已禁用。请绑定D1数据库才能使用此功能。'
+        msg: '仪表板已禁用。请绑定D1数据库才能使用此功能。数据库绑定状态：' + (typeof context.env.DB)
       });
     }
   
