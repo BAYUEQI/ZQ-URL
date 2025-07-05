@@ -225,7 +225,7 @@
 
             $nextTick(() => {
               $refs.url.select()
-              this.alert = { type: 'success', message: `链接 ${document.execCommand('Copy') ? '复制' : '生成'} ` }
+              this.alert = { type: 'success', message: `链接 ${document.execCommand('Copy') ? '已复制' : '已生成'} ` }
             })
           })
           .catch(e => {
