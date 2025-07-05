@@ -26,18 +26,30 @@
     }
 
     .container {
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.92);
       /* 设置容器背景颜色及透明度 */
       border-radius: 10px;
-      padding: 40px;
-      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+      padding: 32px 18px 24px 18px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.18);
       /* 添加阴影 */
       max-width: 600px;
+      width: 100%;
+      margin: 0 8px;
     }
 
-    input:focus {
+    input, select {
+      width: 100%;
+      font-size: 1.1em;
+      padding: 12px 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    input:focus, select:focus {
       outline: none;
-      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.5);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
       /* 绿色聚焦效果 */
     }
 
@@ -46,32 +58,37 @@
       /* 绿色按钮 */
       color: white;
       transition: background-color 0.3s ease;
+      font-size: 1.1em;
+      padding: 14px 0;
+      width: 100%;
+      border-radius: 6px;
+      margin-top: 8px;
     }
 
-    button:hover {
+    button:hover, button:active {
       background-color: #16a34a;
       /* 深绿色悬停效果 */
     }
 
     footer {
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 255, 0.95);
       /* 设置页脚背景颜色及透明度 */
-      padding: 20px;
+      padding: 16px 8px;
       text-align: center;
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
-      /* 添加顶部阴影 */
+      box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.08);
+      font-size: 1em;
     }
 
     h1 {
-      font-size: 3em;
+      font-size: 2.2em;
       /* 加大标题字体 */
       font-weight: 700;
       /* 设置标题字体粗细 */
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       color: #22c55e;
       /* 设置标题颜色 */
     }
@@ -83,6 +100,7 @@
       margin-bottom: 20px;
       font-weight: 600;
       /* 设置消息字体粗细 */
+      font-size: 1em;
     }
 
     .success {
@@ -95,6 +113,28 @@
       background-color: #fee2e2;
       /* 浅红色错误消息 */
       color: #b91c1c;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 18px 4px 16px 4px;
+        max-width: 98vw;
+      }
+      h1 {
+        font-size: 1.5em;
+      }
+      button {
+        font-size: 1em;
+        padding: 12px 0;
+      }
+      input, select {
+        font-size: 1em;
+        padding: 10px 8px;
+      }
+      footer {
+        font-size: 0.95em;
+        padding: 10px 2px;
+      }
     }
   </style>
 </head>
