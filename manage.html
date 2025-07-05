@@ -224,6 +224,7 @@
       currentPage: 1,
       pageSize: 20,
       alert: null,
+      password: '',
       stats: {
         total: 0,
         active: 0,
@@ -232,12 +233,20 @@
       },
 
       init() {
-        this.loadLinks();
+        // 从URL参数中获取密码
+        const urlParams = new URLSearchParams(window.location.search);
+        this.password = urlParams.get('password');
+        
+        if (this.password) {
+          this.loadLinks();
+        } else {
+          this.alert = { type: 'error', message: '缺少访问密码' };
+        }
       },
 
       async loadLinks() {
         try {
-          const response = await fetch('/manage/api/links');
+          const response = await fetch(`/manage/api/links?password=${encodeURIComponent(this.password)}`);
           const data = await response.json();
           
           if (data.success) {
@@ -352,7 +361,7 @@
         }
 
         try {
-          const response = await fetch(`/manage/api/links/${id}`, {
+          const response = await fetch(`/manage/api/links/${id}?password=${encodeURIComponent(this.password)}`, {
             method: 'DELETE'
           });
           const data = await response.json();
