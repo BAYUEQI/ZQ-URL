@@ -62,12 +62,12 @@ export async function onRequestDelete(context) {
         // 删除链接
         await env.DB.prepare(`
             DELETE FROM links WHERE id = ?
-        `).run(linkId);
+        `).bind(linkId).run();
 
         // 同时删除相关的访问日志
         await env.DB.prepare(`
             DELETE FROM logs WHERE slug = ?
-        `).run(existingLink.slug);
+        `).bind(existingLink.slug).run();
 
         return Response.json({ 
             success: true, 
