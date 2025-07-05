@@ -215,7 +215,7 @@
     </div>
   </div>
 
-  <script src="assets/js/alpine.js"></script>
+  <script src="asset/js/alpine.js"></script>
   <script>
     const manageApp = {
       links: [],
@@ -250,12 +250,7 @@
           const data = await response.json();
           
           if (data.success) {
-            this.links = data.links.map(link => {
-              if (link.expires_at === "null" || link.expires_at === null) {
-                link.expires_at = null;
-              }
-              return link;
-            });
+            this.links = data.links;
             this.calculateStats();
           } else {
             this.alert = { type: 'error', message: data.message || '加载失败' };
