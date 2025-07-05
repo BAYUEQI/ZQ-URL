@@ -60,14 +60,18 @@ export async function onRequestDelete(context) {
         }
 
         // 删除链接
-        await env.DB.prepare(
+        const delLinks = await env.DB.prepare(
             `DELETE FROM links WHERE id = ?`
         ).bind(Number(linkId)).run();
 
+        console.log('删除links参数:', linkId, delLinks);
+
         // 同时删除相关的访问日志
-        await env.DB.prepare(
+        const delLogs = await env.DB.prepare(
             `DELETE FROM logs WHERE slug = ?`
         ).bind(existingLink.slug).run();
+
+        console.log('删除logs参数:', existingLink.slug, delLogs);
 
         return Response.json({ 
             success: true, 
