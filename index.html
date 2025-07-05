@@ -154,15 +154,15 @@
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:shadow-outline" />
         </div>
         <div class="mb-4">
-          <label for="expiry" class="block text-sm font-medium text-gray-700 mb-1">过期时间 (可选):</label>
+          <label for="expiry" class="block text-sm font-medium text-gray-700 mb-1">过期时间:</label>
           <select id="expiry" x-model="expiry"
             class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-            <option value="">永不过期</option>
             <option value="5m">5 分钟</option>
             <option value="1h">1 小时</option>
             <option value="12h">12 小时</option>
             <option value="1d">1 天</option>
             <option value="7d">1 周</option>
+            <option value="">永不过期</option>
           </select>
         </div>
         <button :class="{ loading }" :disabled="loading || isValidated()" @click="submit($refs, $nextTick)"
