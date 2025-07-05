@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS links (
   `ip` text,
   `status` int,
   `create_time` DATE,
-  `expires_at` timestamp  
+  `expires_at` timestamp
 );
 DROP TABLE IF EXISTS logs;
 CREATE TABLE IF NOT EXISTS logs (
