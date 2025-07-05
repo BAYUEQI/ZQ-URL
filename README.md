@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS logs (
   `create_time` DATE
 );
 ```
+7.**绑定D1数据库:** 在page中绑定数据库,变量名为DB
+8.**设置变量:** 名称为ACCESS_PASSWORD，值为你的密码，接着重新部署项目
 
 ## API
 短链接生成
