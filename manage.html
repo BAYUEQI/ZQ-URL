@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <link rel="icon" href="asset/img/favicon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>管理面板</title>
+  <title>ZQ-URL 管理面板</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css">
   <style>
     body {
@@ -293,14 +293,14 @@
 
       calculateStats() {
         const now = new Date();
-        const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
 
         this.stats.total = this.links.length;
         this.stats.active = this.links.filter(link => !link.expires_at || new Date(link.expires_at) > now).length;
         this.stats.expiringSoon = this.links.filter(link => 
           link.expires_at && 
           new Date(link.expires_at) > now && 
-          new Date(link.expires_at) <= oneDayFromNow
+          new Date(link.expires_at) <= oneHourFromNow
         ).length;
         this.stats.expired = this.links.filter(link => 
           link.expires_at && new Date(link.expires_at) <= now
@@ -322,7 +322,7 @@
         // 状态过滤
         if (this.filterStatus) {
           const now = new Date();
-          const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+          const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
 
           switch (this.filterStatus) {
             case 'active':
@@ -332,7 +332,7 @@
               filtered = filtered.filter(link => 
                 link.expires_at && 
                 new Date(link.expires_at) > now && 
-                new Date(link.expires_at) <= oneDayFromNow
+                new Date(link.expires_at) <= oneHourFromNow
               );
               break;
             case 'expired':
@@ -346,11 +346,11 @@
 
       getRowClass(link) {
         const now = new Date();
-        const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
 
         if (link.expires_at && new Date(link.expires_at) <= now) {
           return 'expired';
-        } else if (link.expires_at && new Date(link.expires_at) <= oneDayFromNow) {
+        } else if (link.expires_at && new Date(link.expires_at) <= oneHourFromNow) {
           return 'expiring-soon';
         }
         return '';
@@ -358,11 +358,11 @@
 
       getStatusClass(link) {
         const now = new Date();
-        const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
 
         if (link.expires_at && new Date(link.expires_at) <= now) {
           return 'text-red-600 font-bold';
-        } else if (link.expires_at && new Date(link.expires_at) <= oneDayFromNow) {
+        } else if (link.expires_at && new Date(link.expires_at) <= oneHourFromNow) {
           return 'text-yellow-600 font-bold';
         }
         return 'text-green-600 font-bold';
@@ -370,11 +370,11 @@
 
       getStatusText(link) {
         const now = new Date();
-        const oneDayFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
 
         if (link.expires_at && new Date(link.expires_at) <= now) {
           return '已过期';
-        } else if (link.expires_at && new Date(link.expires_at) <= oneDayFromNow) {
+        } else if (link.expires_at && new Date(link.expires_at) <= oneHourFromNow) {
           return '即将过期';
         }
         return '有效';
