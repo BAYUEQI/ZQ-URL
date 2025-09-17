@@ -25,6 +25,7 @@ export default defineNuxtConfig({
     linkCacheTtl: 60,
     redirectWithQuery: false,
     homeURL: '',
+    allowOrigins: '',
     cfAccountId: '',
     cfApiToken: '',
     dataset: 'sink',
