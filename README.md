@@ -203,9 +203,50 @@ ZQ-URL 支持两种 Cloudflare 部署形态：
 - `deploy:worker`: `wrangler deploy`
 - `deploy:pages`: `wrangler pages deploy dist`
 
-## 🔌 API 文档
+## 🔌 API（开发者快速上手）
 
-参见：[`./docs/api.md`](./docs/api.md)
+手写 API 文档工作量大，后续会接入 Nitro OpenAPI 自动生成；这里给出最常用的“创建短链”接口，帮助你快速打通端到端。
+
+- 接口地址：`POST /api/link/create`
+- 请求头：
+  - `authorization`: `Bearer <你的NUXT_SITE_TOKEN>`（示例：`Bearer SinkCool`）
+  - `content-type`: `application/json`
+
+示例请求：
+
+```http
+POST /api/link/create
+HEADER authorization: Bearer SinkCool
+HEADER content-type: application/json
+BODY  {
+  "url": "https://github.com/BAYUEQI/ZQ-URL/issues/14",
+  "slug": "issue14"
+}
+```
+
+响应（201）：
+
+```http
+RESPONSE 201
+BODY  {
+  "link": {
+    "id": "xpqhaurv5q",
+    "url": "https://github.com/BAYUEQI/ZQ-URL/issues/14",
+    "slug": "issue14",
+    "createdAt": 1718119809,
+    "updatedAt": 1718119809
+  }
+}
+```
+
+字段说明：
+
+- `id`：系统自动生成的唯一标识
+- `url`：原始链接，必填
+- `slug`：短链标识，可传入或由系统自动生成
+- `createdAt`/`updatedAt`：UNIX 时间戳，由系统自动生成
+
+完整 API 文档：[`./docs/api.md`](./docs/api.md)
 
 ## 🧰 MCP（可选）
 
@@ -260,5 +301,4 @@ ZQ-URL 支持两种 Cloudflare 部署形态：
 
 ## ☕ 赞助 & 关注
 
-- 关注作者：[X(Twitter)](https://404.li/kai)
 - GitHub Sponsor：[链接](https://github.com/sponsors/ccbikai)
