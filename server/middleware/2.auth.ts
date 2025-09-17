@@ -32,6 +32,29 @@ export default eventHandler((event) => {
     }
   })
 
+  // Set CORS headers for allowed origins so browsers can read API responses
+  // This prevents cases where the request succeeds server-side but the client treats it as failed due to CORS
+  if (origin) {
+    // Reflect the requesting origin when it is whitelisted; otherwise leave unset and let the auth guard reject
+    if (isWhitelisted) {
+      // Use node response to avoid adding new type imports
+      event.node.res.setHeader('Access-Control-Allow-Origin', origin)
+      event.node.res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+      event.node.res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+      event.node.res.setHeader('Vary', 'Origin')
+    }
+  }
+
+  // Handle CORS preflight quickly
+  const reqMethod = (event as any).method || event.node.req.method || ''
+  if (reqMethod.toUpperCase() === 'OPTIONS') {
+    // If origin is allowed, return 204 so browser proceeds; otherwise fall through to auth
+    if (isWhitelisted) {
+      event.node.res.statusCode = 204
+      return ''
+    }
+  }
+
   if (event.path.startsWith('/api/') && !event.path.startsWith('/api/_')) {
     const authed = token && token === config.siteToken
     if (!authed && !isWhitelisted) {
@@ -39,6 +62,13 @@ export default eventHandler((event) => {
         status: 401,
         statusText: 'Unauthorized',
       })
+    }
+    // If authenticated (by token) but not from whitelisted origin, still allow and expose for same-origin tools
+    if (authed && origin) {
+      event.node.res.setHeader('Access-Control-Allow-Origin', origin)
+      event.node.res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+      event.node.res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+      event.node.res.setHeader('Vary', 'Origin')
     }
   }
 
