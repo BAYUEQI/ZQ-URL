@@ -1,5 +1,5 @@
 <script setup>
-const { title, description, image } = useAppConfig()
+const { title, description } = useAppConfig()
 
 useSeoMeta({
   title: `${title} - ${description}`,
@@ -8,10 +8,8 @@ useSeoMeta({
   ogTitle: title,
   ogSiteName: title,
   ogDescription: description,
-  ogImage: image,
   twitterTitle: title,
   twitterDescription: description,
-  twitterImage: image,
   twitterCard: 'summary_large_image',
 })
 
