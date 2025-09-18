@@ -3,7 +3,6 @@
 一款完全跑在 Cloudflare 上的短链与数据分析系统。追求简单、快速、稳定，开箱即用。
 
 
-![Hero](./public/image.png)
 
 ---
 
