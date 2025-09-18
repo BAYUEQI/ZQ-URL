@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "sink",
+  "name": "url",
   "main": "dist/server/index.mjs",
   "assets": {
     "binding": "ASSETS",
@@ -24,7 +24,7 @@
   "kv_namespaces": [
     {
       "binding": "URL",
-      "id": "f70bfa5153fb48c9a4f5eabf64cbb1ca" // IMPORTANT: Change this to your KV namespace ID
+      "id": "ef93d42dc4b34969bab404d2e80f8dd3" // IMPORTANT: Change this to your KV namespace ID
     }
   ]
 }
