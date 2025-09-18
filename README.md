@@ -1,12 +1,7 @@
-# ⚡ ZQ-URL（中文）
+# ⚡ ZQ-URL
 
 一款完全跑在 Cloudflare 上的短链与数据分析系统。追求简单、快速、稳定，开箱即用。
 
-[<img src="https://devin.ai/assets/deepwiki-badge.png" alt="DeepWiki" height="20"/>](https://github.com/BAYUEQI/ZQ-URL)
-![Cloudflare](https://img.shields.io/badge/Cloudflare-F69652?style=flat&logo=cloudflare&logoColor=white)
-![Nuxt](https://img.shields.io/badge/Nuxt-00DC82?style=flat&logo=nuxtdotjs&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
-![shadcn/ui](https://img.shields.io/badge/shadcn/ui-000000?style=flat&logo=shadcnui&logoColor=white)
 
 ![Hero](./public/image.png)
 
@@ -20,32 +15,6 @@
 - **自定义 Slug**：支持自定义与大小写敏感（可配置）。
 - **🪄 AI Slug（可选）**：接入 Workers AI，自动给出更“像人写的”短链。
 - **有效期**：支持设置短链过期时间。
-
-## 🪧 演示
-
-在线演示（官方示例）：[`https://sink.cool/dashboard`](https://sink.cool/dashboard)
-
-演示登录 Token：
-
-```txt
-SinkCool
-```
-
-<details>
-  <summary><b>界面截图</b></summary>
-  <img alt="Analytics" src="./docs/images/sink.cool_dashboard.png"/>
-  <img alt="Links" src="./docs/images/sink.cool_dashboard_links.png"/>
-  <img alt="Link Analytics" src="./docs/images/sink.cool_dashboard_link_slug.png"/>
-</details>
-
-## 🧱 技术堆栈
-
-- **框架**：[Nuxt](https://nuxt.com/)
-- **存储**：[Cloudflare Workers KV](https://developers.cloudflare.com/kv/)
-- **分析引擎**：[Workers Analytics Engine](https://developers.cloudflare.com/analytics/)
-- **UI**：[shadcn-vue](https://www.shadcn-vue.com/)
-- **样式**：[Tailwind CSS](https://tailwindcss.com/)
-- **部署**：[Cloudflare](https://www.cloudflare.com/)
 
 
 ZQ-URL 支持两种 Cloudflare 部署形态：
@@ -80,9 +49,7 @@ ZQ-URL 支持两种 Cloudflare 部署形态：
 
 8) 重新部署。
 
-9) 后续更新：参考 GitHub 官方文档「同步 fork 的分支」。
 
-文档拓展：[`./docs/deployment/workers.md`](./docs/deployment/workers.md)
 
 ### 方式二：部署到 Cloudflare Pages
 
@@ -177,14 +144,12 @@ ZQ-URL 支持两种 Cloudflare 部署形态：
   - 作用：为 API 启用 CORS 支持。
   - 用法：构建时设置 `NUXT_API_CORS=true`。
 
-配置要点：
+- NUXT_ALLOW_ORIGINS：
+  - 作用：来源白名单，列表内的前端页面可免 Token 调用 `/api/**` 接口。
+  - 用法：多个条目用英文逗号分隔，建议填写完整 Origin（含协议），例如：
+    - `https://example.com`
+    - 也支持裸域名作为回退比对：`example.com`
 
-- Workers：到 项目 → Settings → Variables and Secrets 配置上述变量。
-- 以 `NUXT_PUBLIC_` 开头的变量（如预览模式、默认长度）在 Workers 需要在两处配置：
-  - Settings → Build → Variables and Secrets
-  - Settings → Variables and Secrets
-
-更多可选项与详细解释：[`./docs/configuration.md`](./docs/configuration.md)
 
 ## 🧩 Wrangler 与绑定要点
 
@@ -203,20 +168,19 @@ ZQ-URL 支持两种 Cloudflare 部署形态：
 - `deploy:worker`: `wrangler deploy`
 - `deploy:pages`: `wrangler pages deploy dist`
 
-## 🔌 API（开发者快速上手）
+## 🔌 API
 
-手写 API 文档工作量大，后续会接入 Nitro OpenAPI 自动生成；这里给出最常用的“创建短链”接口，帮助你快速打通端到端。
 
 - 接口地址：`POST /api/link/create`
 - 请求头：
-  - `authorization`: `Bearer <你的NUXT_SITE_TOKEN>`（示例：`Bearer SinkCool`）
   - `content-type`: `application/json`
+  - 若未启用白名单：需要 `authorization: Bearer <你的NUXT_SITE_TOKEN>`
+  - 若来源在 `NUXT_ALLOW_ORIGINS` 白名单内：可免 `authorization`
 
 示例请求：
 
 ```http
 POST /api/link/create
-HEADER authorization: Bearer SinkCool
 HEADER content-type: application/json
 BODY  {
   "url": "https://github.com/BAYUEQI/ZQ-URL/issues/14",
@@ -246,59 +210,3 @@ BODY  {
 - `slug`：短链标识，可传入或由系统自动生成
 - `createdAt`/`updatedAt`：UNIX 时间戳，由系统自动生成
 
-完整 API 文档：[`./docs/api.md`](./docs/api.md)
-
-## 🧰 MCP（可选）
-
-项目未内置原生 MCP Server，但提供 OpenAPI，可配合 `mcp-openapi-proxy` 使用：
-
-> 将 `OPENAPI_SPEC_URL` 的域名替换为你的部署域名；`API_KEY` 与 `NUXT_SITE_TOKEN` 一致。
-
-```json
-{
-  "mcpServers": {
-    "sink": {
-      "command": "uvx",
-      "args": [
-        "mcp-openapi-proxy"
-      ],
-      "env": {
-        "OPENAPI_SPEC_URL": "https://sink.cool/_docs/openapi.json",
-        "API_KEY": "SinkCool",
-        "TOOL_WHITELIST": "/api/link/create"
-      }
-    }
-  }
-}
-```
-
-## 🙋 常见问题
-
-详见：[`./docs/faqs.md`](./docs/faqs.md)
-
-要点提示：
-
-- `NUXT_SITE_TOKEN` 不能为纯数字；
-- 若统计数据为空，优先检查 `NUXT_CF_ACCOUNT_ID` 与 `NUXT_CF_API_TOKEN`；
-- 与 NuxtHub 共用数据集时，需将 `NUXT_DATASET` 指向同一数据集。
-
-## 🗺️ Roadmap（WIP）
-
-- [x] 浏览器插件 - [Sink Tool](https://github.com/zhuzhuyule/sink-extension)
-- [x] Raycast 插件 - [Raycast-Sink](https://github.com/foru17/raycast-sink)
-- [x] Apple 快捷指令 - [Sink Shortcuts](https://s.search1api.com/sink001)
-- [x] iOS App - [Sink](https://apps.apple.com/app/id6745417598)
-- [ ] 更强的链接管理（Cloudflare D1）
-- [ ] 分析增强（复合筛选）
-- [ ] 仪表盘性能优化（无限加载）
-- [ ] 单元测试
-
-## 💖 致谢
-
-1. [Cloudflare](https://www.cloudflare.com/)
-2. [NuxtHub](https://hub.nuxt.com/)
-3. [Astroship](https://astroship.web3templates.com/)
-
-## ☕ 赞助 & 关注
-
-- GitHub Sponsor：[链接](https://github.com/sponsors/ccbikai)
