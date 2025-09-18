@@ -1,7 +1,7 @@
 <script setup>
 import { BloggerIcon, GitHubIcon, GmailIcon, TelegramIcon } from 'vue3-simple-icons'
 
-const { title, email, telegram, blog, github } = useAppConfig()
+const { title, email, telegram, blog, githubProfile } = useAppConfig()
 </script>
 
 <template>
@@ -52,8 +52,8 @@ const { title, email, telegram, blog, github } = useAppConfig()
         </a>
 
         <a
-          v-if="github"
-          :href="github"
+          v-if="githubProfile"
+          :href="githubProfile"
           target="_blank"
           title="GitHub"
           class="text-gray-400 hover:text-gray-500"
